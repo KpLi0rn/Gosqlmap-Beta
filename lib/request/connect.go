@@ -46,7 +46,7 @@ func getPage(uri ,get ,post ,method string) (string,map[string][]string,int) {
 func QueryPage(payload,place string) (string,map[string][]string,int) {
 
 	var pageLength int
-	uri := data.Configure.Url
+	uri := data.Configure.BaseUrl
 	method := data.Configure.Method
 	var page string
 	var code int

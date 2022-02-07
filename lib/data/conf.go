@@ -26,6 +26,7 @@ var (
 type Conf struct {
 	// url 相关
 	Method string
+	BaseUrl string
 	Url string
 	Scheme string
 	Path   string

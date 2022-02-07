@@ -129,8 +129,11 @@ func ParseTargetUrl(uri string){
 	// sqlmap 这里编码了一下
 	if len(data.Configure.Query) != 0 {
 		data.Configure.Url = fmt.Sprintf("%s://%s:%s%s%s%s",data.Configure.Scheme,data.Configure.Hostname,data.Configure.Port,data.Configure.Path,data.URI_QUESTION_MARKER,data.Configure.Query)
+		data.Configure.BaseUrl = fmt.Sprintf("%s://%s:%s%s",data.Configure.Scheme,data.Configure.Hostname,data.Configure.Port,data.Configure.Path)
 	}else {
 		data.Configure.Url = fmt.Sprintf("%s://%s:%s%s",data.Configure.Scheme,data.Configure.Hostname,data.Configure.Port,data.Configure.Path)
+		data.Configure.BaseUrl = fmt.Sprintf("%s://%s:%s%s",data.Configure.Scheme,data.Configure.Hostname,data.Configure.Port,data.Configure.Path)
+
 	}
 	data.Configure.Url = strings.Replace(data.Configure.Url,data.URI_QUESTION_MARKER,"?",-1)
 
