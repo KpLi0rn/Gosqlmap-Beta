@@ -84,8 +84,8 @@ func CheckSqlInjection(place,parameter,value string) bool {
 		if len(data.Configure.Dbms) == 0 {
 			// 还未缺认数据库
 			// 还没做完，关注 sqlmap kb.htmlFp 参数
-			data.Configure.Dbms = "MYSQL"
-			data.Kb.ReduceTests = "MYSQL"  // 减少 payload 测试，只做mysql的sql注入
+			data.Configure.Dbms = "MySQL"
+			data.Kb.ReduceTests = "MySQL"  // 减少 payload 测试，只做mysql的sql注入
 		}
 
 		fastPayload := inject.CleanupPayload(test.Request.Payload,value)
@@ -120,9 +120,13 @@ func CheckSqlInjection(place,parameter,value string) bool {
 					page,_,_ := request.QueryPage(reqPayload,place)
 					output := core.ExtractRegexResult(check,page)
 					// 说明报错注入有结果了
-					if len(output) != 0 {
+					// 结果是 qpbvq1qpbqq 才说明成功
+					if len(output) != 0 && output == "1"{
+						data.Kb.Prefix = prefix
+						data.Kb.Suffix = suffix
 						log.Info(fmt.Sprintf("\"parameter '%s' is '%s' injectable \"",parameter,test.Title))
 						payload,_ := url.QueryUnescape(reqPayload)
+						data.Kb.Vector = test.Vector
 						log.Warn(fmt.Sprintf("payload: %s",payload))
 						return true
 					}

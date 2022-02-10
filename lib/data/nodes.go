@@ -2,6 +2,11 @@ package data
 
 import "encoding/xml"
 
+/**
+XML NODES
+ */
+
+
 // payload xml
 type RequestNode struct {
 	XMLName xml.Name `xml:"request"`
@@ -94,3 +99,28 @@ type BounaryTest struct {
 	Prefix string
 	Suffix string
 }
+
+
+// queries.xml
+
+type QueryNode struct {
+	XMLName 	xml.Name 	`xml:"root"`
+	Dbms 		[]DbmsNode	`xml:"dbms"`
+}
+
+type DbmsNode struct {
+	XMLName 	xml.Name 	`xml:"dbms"`
+	Cast		NormalNode		`xml:"cast"`
+	Length 		NormalNode		`xml:"length"`
+}
+
+type NormalNode struct {
+	Query 		string 		`xml:"query,attr"`
+}
+
+type DbmsTest struct {
+	Cast		NormalNode
+	Length 		NormalNode
+}
+
+

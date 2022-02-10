@@ -84,6 +84,11 @@ func (a *Agent) SuffixQuery(payload,comment,suffix string, where int) string{
 
 // 生成请求的 payload 即合并参数
 func (a *Agent) Payload(place,parameter,boundPayload string, where int) string{
+
+	if len(data.Kb.Place) == 0 || len(data.Kb.Parameter) ==0 {
+		data.Kb.Place = place
+		data.Kb.Parameter = parameter
+	}
 	/**
 	parameter -> id
 	 */
@@ -91,9 +96,54 @@ func (a *Agent) Payload(place,parameter,boundPayload string, where int) string{
 	paramDict := data.Configure.ParamsDict[place]
 	originValue := paramDict[parameter]
 
+
 	before := fmt.Sprintf("%s=%s",parameter,originValue)
 	payload := fmt.Sprintf("%s=%s%s",parameter,originValue,url.QueryEscape(boundPayload))
 	//payload := fmt.Sprintf("%s=%s%s",parameter,originValue,boundPayload)
 	reqPayload := strings.Replace(paramString,before,payload,-1)
 	return reqPayload
+}
+
+
+// 正则提取payload中的各个部分
+func (a *Agent) GetFields(query string) string{
+	fieldsNoSelect := query
+	fieldsToCastStr := fieldsNoSelect
+
+	// 获取 select from 之间的参数
+	prefixRegex := "(?:\\s+(?:FIRST|SKIP|LIMIT(?: \\d+)?)\\s+\\d+)*"
+	fieldsSelectFrom, _ := regexp.Compile(fmt.Sprintf("\\ASELECT%s\\s+(.+?)\\s+FROM ",prefixRegex))
+
+	for _,value := range fieldsSelectFrom.FindAllStringSubmatch(query,-1){
+		fieldsToCastStr = value[1]
+	}
+	return fieldsToCastStr
+}
+
+
+//
+func (a *Agent) NullAndCastField(field string) string {
+	var nulledCastedField string
+	if len(field) != 0 && len(data.Configure.Dbms) != 0{
+		rootQuery := data.Configure.Queries[data.Configure.Dbms]
+		if strings.HasPrefix(field,"(CASE") || strings.HasPrefix(field,"(IIF"){
+			nulledCastedField = field
+		}
+		query,_ := utils.GetInner(rootQuery,"cast")
+		nulledCastedField = fmt.Sprintf(query["query"],field)
+	}
+	return nulledCastedField
+}
+
+
+func (a *Agent)LimitQuery(num int, query,field string) string{
+	limitedQuery := query
+	Str,_ := utils.GetInner(data.Configure.Queries[data.Configure.Dbms],"limit")
+	limitStr := Str["query"]
+	if data.Configure.Dbms == "MySQL" {
+		limitStr = fmt.Sprintf(limitStr,num,1)
+		limitedQuery += " " + limitStr
+	}
+
+	return limitedQuery
 }

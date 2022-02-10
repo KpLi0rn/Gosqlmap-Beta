@@ -8,6 +8,8 @@ import (
 	"net/http"
 )
 
+
+
 // 设置请求参数，然后进行发包
 func getPage(uri ,get ,post ,method string) (string,map[string][]string,int) {
 

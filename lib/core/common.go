@@ -151,5 +151,12 @@ func ExtractRegexResult(check,page string) string{
 			retVal = r.FindString(page)
 		}
 	}
+	retVal = strings.Replace(retVal,data.Kb.Chars.Start,"",-1)
+	retVal = strings.Replace(retVal,data.Kb.Chars.Stop,"",-1)
 	return retVal
+}
+
+type RequestPackage interface {
+	GetPage()
+	QueryPage()
 }

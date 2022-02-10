@@ -6,6 +6,7 @@ var (
 	Configure = Conf{
 		Params: make(map[string]string),
 		Headers: make(map[string]string),
+		Queries: make(map[string]map[string]map[string]string),
 	}
 	Kb = KbObject{
 		Chars: KbChars,
@@ -19,7 +20,6 @@ var (
 		Dollar: "qgq",
 		Hash_: "qoq",
 	}
-
 )
 
 // 记录原始配置信息
@@ -49,9 +49,13 @@ type Conf struct {
 	// payloads
 	Tests []JsonTest
 	Boundaries []BounaryTest
+	Queries map[string]map[string]map[string]string
 
 	// 目标版本
 	Dbms string
+
+	// SQL 注入之后的结果
+	ResDbms []string
 }
 
 
@@ -62,6 +66,18 @@ type KbObject struct {
 	TestType int
 
 	Chars Chars
+
+	// 保存注入成功之后的数据
+	Vector string
+
+	Prefix string
+	Suffix string
+
+
+	//
+	Place string
+	Parameter string
+
 }
 type Chars struct {
 	Start string

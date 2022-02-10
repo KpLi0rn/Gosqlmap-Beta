@@ -1,6 +1,7 @@
 package data
 
 var (
+	QUERIES_XML_FILES = "queries.xml"
 	BOUNDARIES_XML_FILES = "boundaries.xml"
 	PAYLOAD_XML_FILES = "error_base_payloads.xml"
 	URI_QUESTION_MARKER = "__QUESTION_MARK__"

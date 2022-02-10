@@ -19,6 +19,7 @@ func Init(){
 	SetPath()
 	loadBoundaries()  // payload 加载
 	loadPayloads()
+	loadQueries()
 }
 
 func createHomeDirectories(){
@@ -58,9 +59,7 @@ func _setThreads()  {
 }
 
 func loadBoundaries()  {
-	/**
-	设置 level 相关先放着，搞一下 sqlmap 具体逻辑再来看
-	 */
+
 	for _,boundariesFile := range strings.Split(data.BOUNDARIES_XML_FILES,","){
 		boundariesFilePath := filepath.Join(data.SQLMAP_XML_PATH,boundariesFile)
 		parse.ParseBoundaryXML(boundariesFilePath)
@@ -75,7 +74,13 @@ func loadPayloads()  {
 		payloadFilePath := filepath.Join(data.SQLMAP_PAYLOADS_PATH,payloadFile)
 		parse.ParseXML(payloadFilePath)
 	}
+}
 
+func loadQueries(){
+	for _,queriesFile := range strings.Split(data.QUERIES_XML_FILES,","){
+		queriesFilePath := filepath.Join(data.SQLMAP_XML_PATH,queriesFile)
+		parse.ParseQueryXML(queriesFilePath)
+	}
 }
 
 

@@ -44,7 +44,11 @@ func Start()  {
 				// SQL 注入真正测试
 				check = CheckSqlInjection(place,parameter,value)
 
+				// 目标存在 sql 注入
 				if check {
+
+					// 进行数据库名注入
+					Action()
 					return
 				}
 			}

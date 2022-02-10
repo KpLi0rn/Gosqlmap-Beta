@@ -1,6 +1,8 @@
 package utils
 
 import (
+	"fmt"
+	"os"
 	"reflect"
 	"strconv"
 	"strings"
@@ -52,4 +54,33 @@ func ContainsKey(m map[string]string,key string) bool {
 		}
 	}
 	return false
+}
+
+func ReadFile(path string) *os.File {
+	file,err := os.Open(path)
+	if err != nil {
+		fmt.Println("error")
+	}
+	defer file.Close()
+	return file
+}
+
+type Demo interface {
+
+}
+// 如果能直接获取到的话那么就直接获取到并进行返回
+// 这个函数后期必须要进行修改
+func GetInner(m map[string]map[string]string,name string) (map[string]string,map[string]map[string]string) {
+	temp := make(map[string]map[string]string)
+	tag := name + "$"
+	for k,v := range m{
+		if strings.Contains(k,tag) {
+			newTag := strings.Replace(k,tag,"",-1)
+			temp[newTag] = v
+		}
+	}
+	if len(temp) == 0 {
+		return m[name],nil
+	}
+	return nil,temp
 }

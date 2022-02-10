@@ -4,6 +4,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"github.com/KpLi0rn/Gosqlmap/lib/data"
+	"github.com/beevik/etree"
 	"io/ioutil"
 	"os"
 )
@@ -58,11 +59,13 @@ func ParseXML(path string)  {
 }
 
 func ParseBoundaryXML(path string){
+	//file := utils.ReadFile(path)
 	file,err := os.Open(path)
 	if err != nil {
 		fmt.Println("error")
 	}
 	defer file.Close()
+
 	XMLdata, _ := ioutil.ReadAll(file)
 	doc := data.BoundaryDoc{}
 	xml.Unmarshal(XMLdata, &doc)
@@ -77,4 +80,38 @@ func ParseBoundaryXML(path string){
 		boundaryTest.Suffix = test.Suffix
 		data.Configure.Boundaries = append(data.Configure.Boundaries,boundaryTest)
 	}
+}
+
+func ParseQueryXML(path string) {
+	doc := etree.NewDocument()
+	if err := doc.ReadFromFile(path); err != nil {
+		panic(err)
+	}
+	root := doc.SelectElement("root")
+
+	var dbs string
+	queryData := make(map[string]map[string]string)
+	for _, dbms := range root.SelectElements("dbms") {
+		dbs = dbms.Attr[0].Value
+		for _,d := range dbms.FindElements("*"){
+			if len(d.Child) != 0 {
+				for _,child := range d.FindElements("*"){
+					// 处理 <users><inbind query=xxxx> 多层级情况
+					queryData[d.Tag +"$"+ child.Tag] = _iterate(child)
+				}
+			}else {
+				queryData[d.Tag] = _iterate(d)
+			}
+		}
+	}
+	data.Configure.Queries[dbs] = queryData
+}
+
+
+func _iterate(e *etree.Element) map[string]string {
+	var temp = make(map[string]string)
+	for _,w := range e.Attr{
+		temp[w.Key] = w.Value
+	}
+	return temp
 }
